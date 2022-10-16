@@ -21,25 +21,22 @@
 
 <script>
 $(document).ready(function(){
-
-setInterval(function(){
     $.ajax({
         type: 'GET',
         url : "/getMessages/{{room}}/",
         success: function(response){
             console.log(response);
             $("#display").empty();
-            for (var key in response.messages)
+            for (let key in response.messages)
             {
-                var temp="<div class='container darker'><b>"+response.messages[key].user+"</b><p>"+response.messages[key].value+"</p><span class='time-left'>"+response.messages[key].date+"</span></div>";
-                $("#display").append(temp);
+              let newMsg="<div class='container darker'><b>"+response.messages[key].user+"</b><p>"+response.messages[key].value+"</p><span class='time-left'>"+response.messages[key].date+"</span></div>";
+              $("#display").append(newMsg);
             }
         },
         error: function(response){
             alert('An error occured')
         }
     });
-},1000);
 })
 </script>
 
@@ -62,18 +59,25 @@ setInterval(function(){
 <script type="text/javascript">
   $(document).on('submit','#post-form',function(event){
     event.preventDefault();
+    let username=$('#username').val()
+    let roomid=$('#room_id').val()
+    let message=$('#message').val()
+    let time=new Date()
 
     $.ajax({
       type:'POST',
       url:'/send',
       data:{
-          username:$('#username').val(),
-          room_id:$('#room_id').val(),
-          message:$('#message').val(),
+          username:username,
+          room_id:roomid,
+          message:message,
         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
       },
-      success: function(data){
-        //  alert(data)
+      success: function(res){
+        console.log(res)
+        let newMsg="<div class='container darker'><b>"+username+"</b><p>"+message+"</p><span class='time-left'>"+time+"</span></div>";
+        console.log(newMsg)
+        $("#display").append(newMsg);
       }
     });
     document.getElementById('message').value = ''
